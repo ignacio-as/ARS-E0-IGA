@@ -47,7 +47,7 @@ Endpoints principales:
 - **Logrado:** RNF1
 - **Logrado:** RNF2
 - **Logrado:** RNF3
-- **Logrado:** RNF4 
+- **Logrado:** RNF4 El dominio es .lat adquirido en namecheap por problemas de uso gratuito de .me y .tech, pero sigue siendo tld publico.
 - **Logrado:** RNF5
 - **Logrado:** RNF6
 - **Logrado:** RNF7
