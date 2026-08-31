@@ -1,0 +1,51 @@
+services:
+  database:
+    image: postgres:17-alpine
+    container_name: database
+    environment:
+      POSTGRES_DB: energyshark
+      POSTGRES_USER: energyshark
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-energyshark}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U energyshark -d energyshark"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  master:
+    build:
+      context: .
+      dockerfile: master/Dockerfile
+    container_name: master
+    environment:
+      DATABASE_URL: postgresql://energyshark:${POSTGRES_PASSWORD:-energyshark}@database:5432/energyshark
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  connector:
+    build:
+      context: .
+      dockerfile: connector/Dockerfile
+    container_name: connector
+    env_file:
+      - .env
+    environment:
+      MASTER_URL: http://master:8000/events
+    depends_on:
+      master:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
